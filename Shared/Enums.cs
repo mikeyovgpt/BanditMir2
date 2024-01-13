@@ -1272,6 +1272,7 @@ public enum Spell : byte
     EnergyShield = 84,
     PetEnhancer = 85,
     HealingCircle = 86,
+    SuperSword = 87,
 
     //Assassin
     FatalSword = 91,

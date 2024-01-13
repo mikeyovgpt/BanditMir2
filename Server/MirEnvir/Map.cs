@@ -1293,6 +1293,7 @@ namespace Server.MirEnvir
                 #region ThunderStorm
 
                 case Spell.ThunderStorm:
+                case Spell.SuperSword:
                 case Spell.FlameField:
                 case Spell.NapalmShot:
                 case Spell.StormEscape:

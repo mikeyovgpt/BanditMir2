@@ -3545,6 +3545,7 @@ namespace Server.MirObjects
                     ShoulderDash(magic);
                     return;
                 case Spell.ThunderStorm:
+                case Spell.SuperSword:
                 case Spell.FlameField:
                 case Spell.StormEscape:
                     ThunderStorm(magic);
