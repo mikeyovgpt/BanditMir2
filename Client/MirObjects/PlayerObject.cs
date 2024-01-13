@@ -1481,6 +1481,10 @@ namespace Client.MirObjects
                                     GameScene.SpellTime = Spell == Spell.FlameField ? CMain.Time + 2500 : CMain.Time + 1800;
                                     MapControl.NextAction = CMain.Time + 2500;
                                 }
+                                {
+                                    GameScene.SpellTime = Spell == Spell.SuperSword ? CMain.Time + 2500 : CMain.Time + 1800;
+                                    MapControl.NextAction = CMain.Time + 2500;
+                                }
                             }
                             break;                         
                         case MirAction.Harvest:
@@ -2239,6 +2243,14 @@ namespace Client.MirObjects
                                 break;
 
                             #endregion
+
+                            #region SuperSword
+
+                            case Spell.SuperSword:
+                                MapControl.Effects.Add(new Effect(Libraries.newmagic, 0, 66, 3000, CurrentLocation));
+                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                break;
+                                #endregion
 
                         }
 
@@ -5308,7 +5320,7 @@ namespace Client.MirObjects
                 BackColour = Color.Transparent,
                 ForeColour = NameColour,
                 OutLine = true,
-                OutLineColour = Color.Black,
+                OutLineColour = Color.SteelBlue,
                 Text = Name,
             };
             NameLabel.Disposing += (o, e) => LabelList.Remove(NameLabel);
@@ -5335,7 +5347,7 @@ namespace Client.MirObjects
                 BackColour = Color.Transparent,
                 ForeColour = NameColour,
                 OutLine = true,
-                OutLineColour = Color.Black,
+                OutLineColour = Color.Purple,
                 Text = GuildName,
             };
             GuildLabel.Disposing += (o, e) => LabelList.Remove(GuildLabel);

@@ -47,7 +47,7 @@ namespace Server.MirObjects
         public NPCObject(NPCInfo info)
         {
             Info = info;
-            NameColour = Color.Lime;
+            NameColour = Color.Orange;
 
             Direction = (MirDirection)Envir.Random.Next(3);
             TurnTime = Envir.Time + Envir.Random.Next(100);

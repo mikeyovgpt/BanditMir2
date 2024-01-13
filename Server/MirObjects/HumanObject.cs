@@ -502,6 +502,11 @@ namespace Server.MirObjects
                 AddBuff(BuffType.ClearRing, this, 0, new Stats());
             }
 
+            if (MyGuild != null && MyGuild.Name == Settings.NewbieGuild)
+            {
+                AddBuff(BuffType.Newbie, this, 0, new Stats { [Stat.ExpRatePercent] = Settings.NewbieExpBuff });
+            }
+
             if (SpecialMode.HasFlag(SpecialItemMode.Skill) && !skill)
             {
                 AddBuff(BuffType.Skill, this, 0, new Stats { [Stat.SkillGainMultiplier] = 3 }, false);
@@ -3540,6 +3545,7 @@ namespace Server.MirObjects
                     ShoulderDash(magic);
                     return;
                 case Spell.ThunderStorm:
+                case Spell.SuperSword:
                 case Spell.FlameField:
                 case Spell.StormEscape:
                     ThunderStorm(magic);
