@@ -1071,7 +1071,7 @@ namespace Client.MirObjects
                                 Frames.TryGetValue(CurrentAction, out Frame);
                                 break;
                             case MirClass.Assassin:
-                                if(GameScene.User.DoubleSlash)
+                                if (GameScene.User.DoubleSlash)
                                     Frames.TryGetValue(MirAction.Attack1, out Frame);
                                 else if (CMain.Shift)
                                     Frames.TryGetValue(CMain.Random.Next(100) >= 20 ? (CMain.Random.Next(100) > 40 ? MirAction.Attack1 : MirAction.Attack4) : (CMain.Random.Next(100) > 10 ? MirAction.Attack2 : MirAction.Attack3), out Frame);
@@ -1117,7 +1117,7 @@ namespace Client.MirObjects
                                 }
                                 break;
                             case Spell.SlashingBurst:
-                                 Frames.TryGetValue(MirAction.Attack1, out Frame);
+                                Frames.TryGetValue(MirAction.Attack1, out Frame);
                                 if (this == User)
                                 {
                                     MapControl.NextAction = CMain.Time + 2000; // 80%
@@ -1191,7 +1191,7 @@ namespace Client.MirObjects
                                     GameScene.SpellTime = CMain.Time + 1500; //Spell Delay
                                 }
                                 break;
-                            case Spell.DoubleShot:                          
+                            case Spell.DoubleShot:
                                 Frames.TryGetValue(MirAction.AttackRange2, out Frame);
                                 CurrentAction = MirAction.AttackRange2;
                                 if (this == User)
@@ -1272,7 +1272,7 @@ namespace Client.MirObjects
                                 Frames.TryGetValue(CurrentAction, out Frame);
                                 break;
                         }
-                        
+
                         break;
                     default:
                         Frames.TryGetValue(CurrentAction, out Frame);
@@ -1395,7 +1395,24 @@ namespace Client.MirObjects
                                             Spell = Spell.CrossHalfMoon;
                                     }
                                 }
-
+                                if (GameScene.User.TaoHalfMoon)
+                                {
+                                    if (TargetObject != null || GameScene.Scene.MapControl.CanTaoHalfMoon(CurrentLocation))
+                                    {
+                                        magic = User.GetMagic(Spell.TaoHalfMoon);
+                                        if (magic != null && magic.BaseCost + magic.LevelCost * magic.Level <= User.MP)
+                                            Spell = Spell.TaoHalfMoon;
+                                    }
+                                }
+                                if (GameScene.User.GoldenHalfMoon)
+                                {
+                                    if (TargetObject != null || GameScene.Scene.MapControl.CanGoldenHalfMoon(CurrentLocation))
+                                    {
+                                        magic = User.GetMagic(Spell.GoldenHalfMoon);
+                                        if (magic != null && magic.BaseCost + magic.LevelCost * magic.Level <= User.MP)
+                                            Spell = Spell.GoldenHalfMoon;
+                                    }
+                                }
                                 if (GameScene.User.DoubleSlash)
                                 {
                                     magic = User.GetMagic(Spell.DoubleSlash);
@@ -1453,873 +1470,878 @@ namespace Client.MirObjects
                         //    break;
 
                         case MirAction.AttackRange1:
-                            {
-                                GameScene.AttackTime = CMain.Time + User.AttackSpeed + 200;
+                                    {
+                                        GameScene.AttackTime = CMain.Time + User.AttackSpeed + 200;
 
-                                uint targetID = (uint)action.Params[0];
-                                Point location = (Point)action.Params[1];
+                                        uint targetID = (uint)action.Params[0];
+                                        Point location = (Point)action.Params[1];
 
-                                Network.Enqueue(new C.RangeAttack { Direction = Direction, Location = CurrentLocation, TargetID = targetID, TargetLocation = location });
-                            }
-                            break;
-                        case MirAction.AttackRange2:
-                        case MirAction.Spell:
-                            {
-                                Spell = (Spell)action.Params[0];
-                                uint targetID = (uint)action.Params[1];
-                                Point location = (Point)action.Params[2];
+                                        Network.Enqueue(new C.RangeAttack { Direction = Direction, Location = CurrentLocation, TargetID = targetID, TargetLocation = location });
+                                    }
+                                    break;
+                                case MirAction.AttackRange2:
+                                case MirAction.Spell:
+                                    {
+                                        Spell = (Spell)action.Params[0];
+                                        uint targetID = (uint)action.Params[1];
+                                        Point location = (Point)action.Params[2];
 
-                                Network.Enqueue(new C.Magic { ObjectID = GameScene.User.ObjectID, Spell = Spell, Direction = Direction, TargetID = targetID, Location = location });
+                                        Network.Enqueue(new C.Magic { ObjectID = GameScene.User.ObjectID, Spell = Spell, Direction = Direction, TargetID = targetID, Location = location });
 
-                                if (Spell == Spell.FlashDash)
-                                {
-                                    GameScene.SpellTime = CMain.Time + 250;
-                                    MapControl.NextAction = CMain.Time;
-                                }
-                                else
-                                {
-                                    GameScene.SpellTime = Spell == Spell.FlameField ? CMain.Time + 2500 : CMain.Time + 1800;
-                                    MapControl.NextAction = CMain.Time + 2500;
-                                }
-                                {
-                                    GameScene.SpellTime = Spell == Spell.SuperSword ? CMain.Time + 2500 : CMain.Time + 1800;
-                                    MapControl.NextAction = CMain.Time + 2500;
-                                }
-                            }
-                            break;                         
-                        case MirAction.Harvest:
-                            if (ArcherLayTrap)
+                                        if (Spell == Spell.FlashDash)
+                                        {
+                                            GameScene.SpellTime = CMain.Time + 250;
+                                            MapControl.NextAction = CMain.Time;
+                                        }
+                                        else
+                                        {
+                                            GameScene.SpellTime = Spell == Spell.FlameField ? CMain.Time + 2500 : CMain.Time + 1800;
+                                            MapControl.NextAction = CMain.Time + 2500;
+                                        }
+                                        {
+                                            GameScene.SpellTime = Spell == Spell.SuperSword ? CMain.Time + 2500 : CMain.Time + 1800;
+                                            MapControl.NextAction = CMain.Time + 2500;
+                                        }
+                                    }
+                                    break;
+                                case MirAction.Harvest:
+                                    if (ArcherLayTrap)
+                                    {
+                                        ArcherLayTrap = false;
+                                        SoundManager.PlaySound(20000 + 124 * 10);
+                                    }
+                                    else
+                                    {
+                                        Network.Enqueue(new C.Harvest { Direction = Direction });
+                                        MapControl.NextAction = CMain.Time + 2500;
+                                    }
+                                    break;
+
+                     }
+                }
+
+
+                            switch (CurrentAction)
                             {
-                                ArcherLayTrap = false;
-                                SoundManager.PlaySound(20000 + 124 * 10);
+                                case MirAction.Pushed:
+                                    FrameIndex = Frame.Count - 1;
+                                    EffectFrameIndex = Frame.EffectCount - 1;
+                                    GameScene.Scene.Redraw();
+                                    break;
+                                case MirAction.DashL:
+                                case MirAction.Jump:
+                                    FrameIndex = 0;
+                                    EffectFrameIndex = 0;
+                                    GameScene.Scene.Redraw();
+                                    break;
+                                case MirAction.DashR:
+                                    FrameIndex = 3;
+                                    EffectFrameIndex = 3;
+                                    GameScene.Scene.Redraw();
+                                    break;
+                                case MirAction.Walking:
+                                case MirAction.Running:
+                                case MirAction.MountWalking:
+                                case MirAction.MountRunning:
+                                case MirAction.Sneek:
+                                    GameScene.Scene.Redraw();
+                                    break;
+                                case MirAction.DashAttack:
+                                    //FrameIndex = 0;
+                                    //EffectFrameIndex = 0;
+                                    GameScene.Scene.Redraw();
+
+                                    if (IsDashAttack())
+                                    {
+                                        action = new QueuedAction { Action = MirAction.Attack4, Direction = Direction, Location = CurrentLocation, Params = new List<object>() };
+                                        action.Params.Add(Spell.FlashDash);
+                                        ActionFeed.Insert(0, action);
+                                    }
+                                    break;
+                                case MirAction.Attack1:
+                                    if (this != User)
+                                    {
+                                        Spell = (Spell)action.Params[0];
+                                        SpellLevel = (byte)action.Params[1];
+                                    }
+
+                                    switch (Spell)
+                                    {
+                                        case Spell.Slaying:
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10 + (Gender == MirGender.Male ? 0 : 1));
+                                            break;
+                                        case Spell.DoubleSlash:
+                                            FrameInterval = (int)(FrameInterval * 0.46f); //46% Animation Speed
+                                            EffectFrameInterval = (int)(EffectFrameInterval * 0.46f);
+
+                                            action = new QueuedAction { Action = MirAction.Attack4, Direction = Direction, Location = CurrentLocation, Params = new List<object>() };
+                                            action.Params.Add(Spell);
+                                            ActionFeed.Insert(0, action);
+
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+                                        case Spell.Thrusting:
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+                                        case Spell.HalfMoon:
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        case Spell.TwinDrakeBlade:
+                                            //FrameInterval = FrameInterval * 9 / 10; //70% Faster Animation
+                                            //EffectFrameInterval = EffectFrameInterval * 9 / 10;
+                                            //action = new QueuedAction { Action = MirAction.Attack4, Direction = Direction, Location = CurrentLocation, Params = new List<object>() };
+                                            //action.Params.Add(Spell);
+                                            //ActionFeed.Insert(0, action);
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        case Spell.CrossHalfMoon:
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+                                        case Spell.GoldenHalfMoon:
+                                            SoundManager.PlaySound(20000 + 10 * 10);
+                                            break;
+                                        case Spell.TaoHalfMoon:
+                                            SoundManager.PlaySound(20000 + 10 * 10);
+                                            break;
+                                        case Spell.FlamingSword:
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10 + 1);
+                                            break;
+
+
+                                    }
+                                    break;
+                                case MirAction.Attack4:
+                                    Spell = (Spell)action.Params[0];
+                                    switch (Spell)
+                                    {
+                                        case Spell.DoubleSlash:
+                                            FrameInterval = (int)(FrameInterval * 0.46f); //46% Animation Speed
+                                            EffectFrameInterval = (int)(EffectFrameInterval * 0.46f);
+
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10 + 1);
+                                            break;
+                                        case Spell.TwinDrakeBlade:
+                                            FrameInterval = FrameInterval * 9 / 10; //80% Animation Speed
+                                            EffectFrameInterval = EffectFrameInterval * 9 / 10;
+                                            break;
+                                        case Spell.FlashDash:
+                                            int attackDelay = (User.AttackSpeed - 120) <= 300 ? 300 : (User.AttackSpeed - 120);
+
+                                            float attackRate = (float)(attackDelay / 300F * 10F);
+                                            FrameInterval = FrameInterval * (int)attackRate / 20;
+                                            EffectFrameInterval = EffectFrameInterval * (int)attackRate / 20;
+                                            break;
+                                    }
+                                    break;
+                                case MirAction.Struck:
+                                case MirAction.MountStruck:
+                                    uint attackerID = (uint)action.Params[0];
+                                    StruckWeapon = -2;
+                                    for (int i = 0; i < MapControl.Objects.Count; i++)
+                                    {
+                                        MapObject ob = MapControl.Objects[i];
+                                        if (ob.ObjectID != attackerID) continue;
+                                        if (ob.Race != ObjectType.Player) break;
+                                        PlayerObject player = ((PlayerObject)ob);
+                                        StruckWeapon = player.Weapon;
+                                        if (player.Class != MirClass.Assassin || StruckWeapon == -1) break;
+                                        StruckWeapon = 1;
+                                        break;
+                                    }
+
+                                    PlayStruckSound();
+                                    PlayFlinchSound();
+                                    break;
+                                case MirAction.AttackRange1: //ArcherTest - Assign Target for other users
+                                    if (this != User)
+                                    {
+                                        TargetID = (uint)action.Params[0];
+                                        TargetPoint = (Point)action.Params[1];
+                                        Spell = (Spell)action.Params[2];
+                                    }
+                                    break;
+                                case MirAction.AttackRange2:
+                                case MirAction.Spell:
+                                    if (this != User)
+                                    {
+                                        Spell = (Spell)action.Params[0];
+                                        TargetID = (uint)action.Params[1];
+                                        TargetPoint = (Point)action.Params[2];
+                                        Cast = (bool)action.Params[3];
+                                        SpellLevel = (byte)action.Params[4];
+                                        SecondaryTargetIDs = (List<uint>)action.Params[5];
+                                    }
+
+                                    switch (Spell)
+                                    {
+                                        #region FireBall
+
+                                        case Spell.FireBall:
+                                            Effects.Add(new Effect(Libraries.Magic, 0, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Healing
+
+                                        case Spell.Healing:
+                                            Effects.Add(new Effect(Libraries.Magic, 200, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Repulsion
+
+                                        case Spell.Repulsion:
+                                            Effects.Add(new Effect(Libraries.Magic, 900, 6, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region ElectricShock
+
+                                        case Spell.ElectricShock:
+                                            Effects.Add(new Effect(Libraries.Magic, 1560, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Poisoning
+
+                                        case Spell.Poisoning:
+                                            Effects.Add(new Effect(Libraries.Magic, 600, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region GreatFireBall
+
+                                        case Spell.GreatFireBall:
+                                            Effects.Add(new Effect(Libraries.Magic, 400, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region HellFire
+
+                                        case Spell.HellFire:
+                                            Effects.Add(new Effect(Libraries.Magic, 920, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region ThunderBolt
+
+                                        case Spell.ThunderBolt:
+                                            Effects.Add(new Effect(Libraries.Magic2, 20, 3, 300, this));
+                                            break;
+
+                                        #endregion
+
+                                        #region SoulFireBall
+
+                                        case Spell.SoulFireBall:
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region SummonSkeleton
+
+                                        case Spell.SummonSkeleton:
+                                            Effects.Add(new Effect(Libraries.Magic, 1500, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+                                        #region StormEscape
+                                        case Spell.StormEscape:
+                                            Effects.Add(new Effect(Libraries.Magic3, 590, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+                                        #endregion
+                                        #region Teleport
+
+                                        case Spell.Teleport:
+                                            Effects.Add(new Effect(Libraries.Magic, 1590, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Blink
+
+                                        case Spell.Blink:
+                                            Effects.Add(new Effect(Libraries.Magic, 1590, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Hiding
+
+                                        case Spell.Hiding:
+                                            Effects.Add(new Effect(Libraries.Magic, 1520, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Haste
+
+                                        case Spell.Haste:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2140 + (int)Direction * 10, 6, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Fury
+
+                                        case Spell.Fury:
+                                            Effects.Add(new Effect(Libraries.Magic3, 200, 8, 8 * FrameInterval, this));
+                                            Effects.Add(new Effect(Libraries.Magic3, 187, 10, 10 * FrameInterval, this));
+                                            //i don't know sound
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region ImmortalSkin
+                                        case Spell.ImmortalSkin:
+                                            Effects.Add(new Effect(Libraries.Magic3, 550, 17, Frame.Count * FrameInterval * 4, this));
+                                            Effects.Add(new Effect(Libraries.Magic3, 570, 5, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+                                        #endregion
+
+                                        #region FireBang
+
+                                        case Spell.FireBang:
+                                            Effects.Add(new Effect(Libraries.Magic, 1650, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region FireWall
+
+                                        case Spell.FireWall:
+                                            Effects.Add(new Effect(Libraries.Magic, 1620, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region HealingCircle
+
+                                        case Spell.HealingCircle:
+                                            Effects.Add(new Effect(Libraries.Magic3, 620, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region MoonMist
+
+                                        case Spell.MoonMist:
+                                            MapControl.Effects.Add(new Effect(Libraries.Magic3, 680, 25, 1800, CurrentLocation));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region TrapHexagon
+
+                                        case Spell.TrapHexagon:
+                                            Effects.Add(new Effect(Libraries.Magic, 1380, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region EnergyRepulsor
+
+                                        case Spell.EnergyRepulsor:
+                                            Effects.Add(new Effect(Libraries.Magic2, 190, 6, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region FireBurst
+
+                                        case Spell.FireBurst:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2320, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region FlameDisruptor
+
+                                        case Spell.FlameDisruptor:
+                                            Effects.Add(new Effect(Libraries.Magic2, 130, 6, Frame.Count * FrameInterval, this));
+                                            break;
+
+                                        #endregion
+
+                                        #region SummonShinsu
+
+                                        case Spell.SummonShinsu:
+                                            Effects.Add(new Effect(Libraries.Magic2, 0, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region UltimateEnchancer
+
+                                        case Spell.UltimateEnhancer:
+                                            Effects.Add(new Effect(Libraries.Magic2, 160, 15, 1000, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region FrostCrunch
+
+                                        case Spell.FrostCrunch:
+                                            Effects.Add(new Effect(Libraries.Magic2, 400, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Purification
+
+                                        case Spell.Purification:
+                                            Effects.Add(new Effect(Libraries.Magic2, 600, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region FlameField
+
+                                        case Spell.FlameField:
+                                            MapControl.Effects.Add(new Effect(Libraries.Magic2, 910, 23, 1800, CurrentLocation));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Trap
+
+                                        case Spell.Trap:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2340, 11, 11 * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region MoonLight
+
+                                        case Spell.MoonLight:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2380, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region SwiftFeet
+
+                                        case Spell.SwiftFeet:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2440, 16, 16 * EffectFrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region LightBody
+
+                                        case Spell.LightBody:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2470, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+
+                                        #region PoisonSword
+
+                                        case Spell.PoisonSword:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2490 + ((int)Direction * 10), 10, Frame.Count * FrameInterval + 500, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region DarkBody
+
+                                        case Spell.DarkBody:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2580, 10, 10 * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region ThunderStorm
+
+                                        case Spell.ThunderStorm:
+                                            MapControl.Effects.Add(new Effect(Libraries.Magic, 1680, 10, Frame.Count * FrameInterval, CurrentLocation));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region MassHealing
+
+                                        case Spell.MassHealing:
+                                            Effects.Add(new Effect(Libraries.Magic, 1790, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region IceStorm
+
+                                        case Spell.IceStorm:
+                                            Effects.Add(new Effect(Libraries.Magic, 3840, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region MagicShield
+
+                                        case Spell.MagicShield:
+                                            Effects.Add(new Effect(Libraries.Magic, 3880, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region TurnUndead
+
+                                        case Spell.TurnUndead:
+                                            Effects.Add(new Effect(Libraries.Magic, 3920, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region MagicBooster
+
+                                        case Spell.MagicBooster:
+                                            Effects.Add(new Effect(Libraries.Magic3, 80, 9, 9 * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region PetEnhancer
+
+                                        case Spell.PetEnhancer:
+                                            Effects.Add(new Effect(Libraries.Magic3, 200, 8, 8 * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Revelation
+
+                                        case Spell.Revelation:
+                                            Effects.Add(new Effect(Libraries.Magic, 3960, 20, 1200, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region ProtectionField
+
+                                        case Spell.ProtectionField:
+                                            Effects.Add(new Effect(Libraries.Magic2, 1520, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Rage
+
+                                        case Spell.Rage:
+                                            Effects.Add(new Effect(Libraries.Magic2, 1510, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+
+                                        #region Vampirism
+
+                                        case Spell.Vampirism:
+                                            Effects.Add(new Effect(Libraries.Magic2, 1040, 7, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region LionRoar, BattleCry
+
+                                        case Spell.LionRoar:
+                                        case Spell.BattleCry:
+                                            Effects.Add(new Effect(Libraries.Magic2, 710, 20, 1200, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10 + (Gender == MirGender.Male ? 0 : 1));
+                                            break;
+
+                                        #endregion
+
+                                        #region TwinDrakeBlade
+
+                                        case Spell.TwinDrakeBlade:
+                                            Effects.Add(new Effect(Libraries.Magic2, 210, 6, 500, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Entrapment
+
+                                        case Spell.Entrapment:
+                                            Effects.Add(new Effect(Libraries.Magic2, 990, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region BladeAvalanche
+
+                                        case Spell.BladeAvalanche:
+                                            Effects.Add(new Effect(Libraries.Magic2, 740 + (int)Direction * 20, 15, 15 * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region SlashingBurst
+
+                                        case Spell.SlashingBurst:
+                                            //MapControl.Effects.Add(new Effect(Libraries.Magic2, 1700 + (int)Direction * 10, 9, 9 * FrameInterval, CurrentLocation));
+                                            Effects.Add(new Effect(Libraries.Magic2, 1700 + (int)Direction * 10, 9, 9 * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            SlashingBurstTime = CMain.Time + 2000;
+                                            break;
+
+                                        #endregion
+
+                                        #region CounterAttack
+
+                                        case Spell.CounterAttack:
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10 + 5);
+                                            Effects.Add(new Effect(Libraries.Magic, 3480 + (int)Direction * 10, 10, 10 * FrameInterval, this));
+                                            Effects.Add(new Effect(Libraries.Magic3, 140, 2, 2 * FrameInterval, this));
+                                            break;
+
+                                        #endregion
+
+                                        #region CrescentSlash
+
+                                        case Spell.CrescentSlash:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2620 + (int)Direction * 20, 20, 20 * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10 + (Gender == MirGender.Male ? 0 : 1));
+
+
+                                            break;
+
+                                        #endregion
+
+                                        #region FlashDash
+
+                                        case Spell.FlashDash:
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10 + (Gender == MirGender.Male ? 0 : 1));
+                                            int attackDelay = (User.AttackSpeed - 120) <= 300 ? 300 : (User.AttackSpeed - 120);
+
+                                            float attackRate = (float)(attackDelay / 300F * 10F);
+                                            FrameInterval = FrameInterval * (int)attackRate / 20;
+                                            EffectFrameInterval = EffectFrameInterval * (int)attackRate / 20;
+                                            break;
+                                        #endregion
+
+                                        #region Mirroring
+
+                                        case Spell.Mirroring:
+                                            Effects.Add(new Effect(Libraries.Magic2, 650, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region Blizzard
+
+                                        case Spell.Blizzard:
+                                            Effects.Add(new Effect(Libraries.Magic2, 1540, 8, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            BlizzardStopTime = CMain.Time + 3000;
+                                            break;
+
+                                        #endregion
+
+                                        #region MeteorStrike
+
+                                        case Spell.MeteorStrike:
+                                            Effects.Add(new Effect(Libraries.Magic2, 1590, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            BlizzardStopTime = CMain.Time + 3000;
+                                            break;
+
+                                        #endregion
+
+                                        #region Reincarnation
+
+                                        case Spell.Reincarnation:
+                                            ReincarnationStopTime = CMain.Time + 6000;
+                                            break;
+
+                                        #endregion
+
+                                        #region HeavenlySword
+
+                                        case Spell.HeavenlySword:
+                                            Effects.Add(new Effect(Libraries.Magic2, 2230 + ((int)Direction * 10), 8, 800, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region ElementalBarrier
+
+                                        case Spell.ElementalBarrier:
+                                            if (HasElements && !ElementalBarrier)
+                                            {
+                                                Effects.Add(new Effect(Libraries.Magic3, 1880, 8, Frame.Count * FrameInterval, this));
+                                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            }
+                                            break;
+
+                                        #endregion
+
+                                        #region PoisonShot
+                                        case Spell.PoisonShot:
+                                            Effects.Add(new Effect(Libraries.Magic3, 2300, 8, 1000, this));
+                                            break;
+                                        #endregion
+
+                                        #region OneWithNature
+                                        case Spell.OneWithNature:
+                                            MapControl.Effects.Add(new Effect(Libraries.Magic3, 2710, 8, 1200, CurrentLocation));
+                                            SoundManager.PlaySound(20000 + 139 * 10);
+                                            break;
+                                        #endregion
+
+
+                                        #region FireBounce
+
+                                        case Spell.FireBounce:
+                                            Effects.Add(new Effect(Libraries.Magic, 400, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell.GreatFireBall * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region MeteorShower
+
+                                        case Spell.MeteorShower:
+                                            Effects.Add(new Effect(Libraries.Magic, 400, 10, Frame.Count * FrameInterval, this));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell.GreatFireBall * 10);
+                                            break;
+
+                                        #endregion
+
+                                        #region SuperSword
+
+                                        case Spell.SuperSword:
+                                            MapControl.Effects.Add(new Effect(Libraries.newmagic, 0, 66, 3000, CurrentLocation));
+                                            SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                            break;
+                                            #endregion
+
+                                    }
+
+
+                                    break;
+                                case MirAction.Dead:
+                                    GameScene.Scene.Redraw();
+                                    GameScene.Scene.MapControl.SortObject(this);
+                                    if (MouseObject == this) MouseObjectID = 0;
+                                    if (TargetObject == this) TargetObjectID = 0;
+                                    if (MagicObject == this) MagicObjectID = 0;
+                                    DeadTime = CMain.Time;
+                                    break;
+
                             }
-                            else
-                            {
-                                Network.Enqueue(new C.Harvest { Direction = Direction });
-                                MapControl.NextAction = CMain.Time + 2500;
-                            }
-                            break;
 
                     }
-                }
 
+                    GameScene.Scene.MapControl.TextureValid = false;
 
-                switch (CurrentAction)
-                {
-                    case MirAction.Pushed:
-                        FrameIndex = Frame.Count - 1;
-                        EffectFrameIndex = Frame.EffectCount - 1;
-                        GameScene.Scene.Redraw();
-                        break;
-                    case MirAction.DashL:
-                    case MirAction.Jump:
-                        FrameIndex = 0;
-                        EffectFrameIndex = 0;
-                        GameScene.Scene.Redraw();
-                        break;
-                    case MirAction.DashR:
-                        FrameIndex = 3;
-                        EffectFrameIndex = 3;
-                        GameScene.Scene.Redraw();
-                        break;
-                    case MirAction.Walking:
-                    case MirAction.Running:
-                    case MirAction.MountWalking:
-                    case MirAction.MountRunning:
-                    case MirAction.Sneek:
-                        GameScene.Scene.Redraw();
-                        break;
-                    case MirAction.DashAttack:
-                        //FrameIndex = 0;
-                        //EffectFrameIndex = 0;
-                        GameScene.Scene.Redraw();
+                    NextMotion = CMain.Time + FrameInterval;
+                    NextMotion2 = CMain.Time + EffectFrameInterval;
 
-                        if (IsDashAttack())
+                    if (ElementalBarrier)
+                    {
+                        switch (CurrentAction)
                         {
-                            action = new QueuedAction { Action = MirAction.Attack4, Direction = Direction, Location = CurrentLocation, Params = new List<object>() };
-                            action.Params.Add(Spell.FlashDash);
-                            ActionFeed.Insert(0, action);
-                        }
-                        break;
-                    case MirAction.Attack1:
-                        if (this != User)
-                        {
-                            Spell = (Spell)action.Params[0];
-                            SpellLevel = (byte)action.Params[1];
-                        }
-
-                        switch (Spell)
-                        {
-                            case Spell.Slaying:
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10 + (Gender == MirGender.Male ? 0 : 1));
-                                break;
-                            case Spell.DoubleSlash:
-                                FrameInterval = (int)(FrameInterval * 0.46f); //46% Animation Speed
-                                EffectFrameInterval = (int)(EffectFrameInterval * 0.46f);
-
-                                action = new QueuedAction { Action = MirAction.Attack4, Direction = Direction, Location = CurrentLocation, Params = new List<object>() };
-                                action.Params.Add(Spell);
-                                ActionFeed.Insert(0, action);
-
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-                            case Spell.Thrusting:
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-                            case Spell.HalfMoon:
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            case Spell.TwinDrakeBlade:
-                                //FrameInterval = FrameInterval * 9 / 10; //70% Faster Animation
-                                //EffectFrameInterval = EffectFrameInterval * 9 / 10;
-                                //action = new QueuedAction { Action = MirAction.Attack4, Direction = Direction, Location = CurrentLocation, Params = new List<object>() };
-                                //action.Params.Add(Spell);
-                                //ActionFeed.Insert(0, action);
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            case Spell.CrossHalfMoon:
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            case Spell.FlamingSword:
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10 + 1);
-                                break;
-
-                            
-                        }
-                        break;
-                    case MirAction.Attack4:
-                        Spell = (Spell)action.Params[0];
-                        switch (Spell)
-                        {
-                            case Spell.DoubleSlash:
-                                FrameInterval = (int)(FrameInterval * 0.46f); //46% Animation Speed
-                                EffectFrameInterval = (int)(EffectFrameInterval * 0.46f);
-
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10 + 1);
-                                break;
-                            case Spell.TwinDrakeBlade:
-                                FrameInterval = FrameInterval * 9 / 10; //80% Animation Speed
-                                EffectFrameInterval = EffectFrameInterval * 9 / 10;
-                                break;
-                            case Spell.FlashDash:
-                                int attackDelay = (User.AttackSpeed - 120) <= 300 ? 300 : (User.AttackSpeed - 120);
-
-                                float attackRate = (float)(attackDelay / 300F * 10F);
-                                FrameInterval = FrameInterval * (int)attackRate / 20;
-                                EffectFrameInterval = EffectFrameInterval * (int)attackRate / 20;
-                                break;
-                        }
-                        break;
-                    case MirAction.Struck:
-                    case MirAction.MountStruck:
-                        uint attackerID = (uint)action.Params[0];
-                        StruckWeapon = -2;
-                        for (int i = 0; i < MapControl.Objects.Count; i++)
-                        {
-                            MapObject ob = MapControl.Objects[i];
-                            if (ob.ObjectID != attackerID) continue;
-                            if (ob.Race != ObjectType.Player) break;
-                            PlayerObject player = ((PlayerObject)ob);
-                            StruckWeapon = player.Weapon;
-                            if (player.Class != MirClass.Assassin || StruckWeapon == -1) break;
-                            StruckWeapon = 1;
-                            break;
-                        }
-
-                        PlayStruckSound();
-                        PlayFlinchSound();
-                        break;
-                    case MirAction.AttackRange1: //ArcherTest - Assign Target for other users
-                        if (this != User)
-                        {
-                            TargetID = (uint)action.Params[0];
-                            TargetPoint = (Point)action.Params[1];
-                            Spell = (Spell)action.Params[2];
-                        }
-                        break;
-                    case MirAction.AttackRange2:
-                    case MirAction.Spell:
-                        if (this != User)
-                        {
-                            Spell = (Spell)action.Params[0];
-                            TargetID = (uint)action.Params[1];
-                            TargetPoint = (Point)action.Params[2];
-                            Cast = (bool)action.Params[3];
-                            SpellLevel = (byte)action.Params[4];
-                            SecondaryTargetIDs = (List<uint>)action.Params[5];
-                        }
-
-                        switch (Spell)
-                        {
-                            #region FireBall
-
-                            case Spell.FireBall:
-                                Effects.Add(new Effect(Libraries.Magic, 0, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Healing
-
-                            case Spell.Healing:
-                                Effects.Add(new Effect(Libraries.Magic, 200, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Repulsion
-
-                            case Spell.Repulsion:
-                                Effects.Add(new Effect(Libraries.Magic, 900, 6, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region ElectricShock
-
-                            case Spell.ElectricShock:
-                                Effects.Add(new Effect(Libraries.Magic, 1560, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Poisoning
-
-                            case Spell.Poisoning:
-                                Effects.Add(new Effect(Libraries.Magic, 600, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region GreatFireBall
-
-                            case Spell.GreatFireBall:
-                                Effects.Add(new Effect(Libraries.Magic, 400, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region HellFire
-
-                            case Spell.HellFire:
-                                Effects.Add(new Effect(Libraries.Magic, 920, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region ThunderBolt
-
-                            case Spell.ThunderBolt:
-                                Effects.Add(new Effect(Libraries.Magic2, 20, 3, 300, this));
-                                break;
-
-                            #endregion
-
-                            #region SoulFireBall
-
-                            case Spell.SoulFireBall:
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region SummonSkeleton
-
-                            case Spell.SummonSkeleton:
-                                Effects.Add(new Effect(Libraries.Magic, 1500, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-                            #region StormEscape
-                            case Spell.StormEscape:
-                                Effects.Add(new Effect(Libraries.Magic3, 590, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-                            #endregion
-                            #region Teleport
-
-                            case Spell.Teleport:
-                                Effects.Add(new Effect(Libraries.Magic, 1590, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Blink
-
-                            case Spell.Blink:
-                                Effects.Add(new Effect(Libraries.Magic, 1590, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Hiding
-
-                            case Spell.Hiding:
-                                Effects.Add(new Effect(Libraries.Magic, 1520, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Haste
-
-                            case Spell.Haste:
-                                Effects.Add(new Effect(Libraries.Magic2, 2140 + (int)Direction * 10, 6, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Fury
-
-                            case Spell.Fury:
-                                Effects.Add(new Effect(Libraries.Magic3, 200, 8, 8 * FrameInterval, this));
-                                Effects.Add(new Effect(Libraries.Magic3, 187, 10, 10 * FrameInterval, this));
-                                //i don't know sound
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region ImmortalSkin
-                            case Spell.ImmortalSkin:
-                                Effects.Add(new Effect(Libraries.Magic3, 550, 17, Frame.Count * FrameInterval * 4, this));
-                                Effects.Add(new Effect(Libraries.Magic3, 570, 5, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-                            #endregion
-
-                            #region FireBang
-
-                            case Spell.FireBang:
-                                Effects.Add(new Effect(Libraries.Magic, 1650, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region FireWall
-
-                            case Spell.FireWall:
-                                Effects.Add(new Effect(Libraries.Magic, 1620, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region HealingCircle
-
-                            case Spell.HealingCircle:
-                                Effects.Add(new Effect(Libraries.Magic3, 620, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region MoonMist
-
-                            case Spell.MoonMist:
-                                MapControl.Effects.Add(new Effect(Libraries.Magic3, 680, 25, 1800, CurrentLocation));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region TrapHexagon
-
-                            case Spell.TrapHexagon:
-                                Effects.Add(new Effect(Libraries.Magic, 1380, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region EnergyRepulsor
-
-                            case Spell.EnergyRepulsor:
-                                Effects.Add(new Effect(Libraries.Magic2, 190, 6, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region FireBurst
-
-                            case Spell.FireBurst:
-                                Effects.Add(new Effect(Libraries.Magic2, 2320, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region FlameDisruptor
-
-                            case Spell.FlameDisruptor:
-                                Effects.Add(new Effect(Libraries.Magic2, 130, 6, Frame.Count * FrameInterval, this));
-                                break;
-
-                            #endregion
-
-                            #region SummonShinsu
-
-                            case Spell.SummonShinsu:
-                                Effects.Add(new Effect(Libraries.Magic2, 0, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region UltimateEnchancer
-
-                            case Spell.UltimateEnhancer:
-                                Effects.Add(new Effect(Libraries.Magic2, 160, 15, 1000, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region FrostCrunch
-
-                            case Spell.FrostCrunch:
-                                Effects.Add(new Effect(Libraries.Magic2, 400, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Purification
-
-                            case Spell.Purification:
-                                Effects.Add(new Effect(Libraries.Magic2, 600, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region FlameField
-
-                            case Spell.FlameField:
-                                MapControl.Effects.Add(new Effect(Libraries.Magic2, 910, 23, 1800, CurrentLocation));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Trap
-
-                            case Spell.Trap:
-                                Effects.Add(new Effect(Libraries.Magic2, 2340, 11, 11 * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region MoonLight
-
-                            case Spell.MoonLight:
-                                Effects.Add(new Effect(Libraries.Magic2, 2380, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region SwiftFeet
-
-                            case Spell.SwiftFeet:
-                                Effects.Add(new Effect(Libraries.Magic2, 2440, 16, 16 * EffectFrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region LightBody
-
-                            case Spell.LightBody:
-                                Effects.Add(new Effect(Libraries.Magic2, 2470, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-
-                            #region PoisonSword
-
-                            case Spell.PoisonSword:
-                                Effects.Add(new Effect(Libraries.Magic2, 2490 + ((int)Direction * 10), 10, Frame.Count * FrameInterval + 500, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region DarkBody
-
-                            case Spell.DarkBody:
-                                Effects.Add(new Effect(Libraries.Magic2, 2580, 10, 10 * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region ThunderStorm
-
-                            case Spell.ThunderStorm:
-                                MapControl.Effects.Add(new Effect(Libraries.Magic, 1680, 10, Frame.Count * FrameInterval, CurrentLocation));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region MassHealing
-
-                            case Spell.MassHealing:
-                                Effects.Add(new Effect(Libraries.Magic, 1790, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region IceStorm
-
-                            case Spell.IceStorm:
-                                Effects.Add(new Effect(Libraries.Magic, 3840, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region MagicShield
-
-                            case Spell.MagicShield:
-                                Effects.Add(new Effect(Libraries.Magic, 3880, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region TurnUndead
-
-                            case Spell.TurnUndead:
-                                Effects.Add(new Effect(Libraries.Magic, 3920, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region MagicBooster
-
-                            case Spell.MagicBooster:
-                                Effects.Add(new Effect(Libraries.Magic3, 80, 9, 9 * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region PetEnhancer
-
-                            case Spell.PetEnhancer:
-                                Effects.Add(new Effect(Libraries.Magic3, 200, 8, 8 * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Revelation
-
-                            case Spell.Revelation:
-                                Effects.Add(new Effect(Libraries.Magic, 3960, 20, 1200, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region ProtectionField
-
-                            case Spell.ProtectionField:
-                                Effects.Add(new Effect(Libraries.Magic2, 1520, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Rage
-
-                            case Spell.Rage:
-                                Effects.Add(new Effect(Libraries.Magic2, 1510, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-
-                            #region Vampirism
-
-                            case Spell.Vampirism:
-                                Effects.Add(new Effect(Libraries.Magic2, 1040, 7, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region LionRoar, BattleCry
-
-                            case Spell.LionRoar:
-                            case Spell.BattleCry:
-                                Effects.Add(new Effect(Libraries.Magic2, 710, 20, 1200, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10 + (Gender == MirGender.Male ? 0 : 1));
-                                break;
-
-                            #endregion
-
-                            #region TwinDrakeBlade
-
-                            case Spell.TwinDrakeBlade:
-                                Effects.Add(new Effect(Libraries.Magic2, 210, 6, 500, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Entrapment
-
-                            case Spell.Entrapment:
-                                Effects.Add(new Effect(Libraries.Magic2, 990, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region BladeAvalanche
-
-                            case Spell.BladeAvalanche:
-                                Effects.Add(new Effect(Libraries.Magic2, 740 + (int)Direction * 20, 15, 15 * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region SlashingBurst
-
-                            case Spell.SlashingBurst:
-                                //MapControl.Effects.Add(new Effect(Libraries.Magic2, 1700 + (int)Direction * 10, 9, 9 * FrameInterval, CurrentLocation));
-                                Effects.Add(new Effect(Libraries.Magic2, 1700 + (int)Direction * 10, 9, 9 * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                SlashingBurstTime = CMain.Time + 2000;
-                                break;
-
-                            #endregion
-
-                            #region CounterAttack
-
-                            case Spell.CounterAttack:
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10 + 5);
-                                Effects.Add(new Effect(Libraries.Magic, 3480 + (int)Direction * 10, 10, 10 * FrameInterval, this));
-                                Effects.Add(new Effect(Libraries.Magic3, 140, 2, 2 * FrameInterval, this));
-                                break;
-
-                            #endregion
-
-                            #region CrescentSlash
-
-                            case Spell.CrescentSlash:
-                                Effects.Add(new Effect(Libraries.Magic2, 2620 + (int)Direction * 20, 20, 20 * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10 + (Gender == MirGender.Male ? 0 : 1));
-
-                               
-                                break;
-
-                            #endregion
-
-                            #region FlashDash
-
-                            case Spell.FlashDash:
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10 + (Gender == MirGender.Male ? 0 : 1));
-                                int attackDelay = (User.AttackSpeed - 120) <= 300 ? 300 : (User.AttackSpeed - 120);
-
-                                float attackRate = (float)(attackDelay / 300F * 10F);
-                                FrameInterval = FrameInterval * (int)attackRate / 20;
-                                EffectFrameInterval = EffectFrameInterval * (int)attackRate / 20;
-                                break;
-                            #endregion
-
-                            #region Mirroring
-
-                            case Spell.Mirroring:
-                                Effects.Add(new Effect(Libraries.Magic2, 650, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region Blizzard
-
-                            case Spell.Blizzard:
-                                Effects.Add(new Effect(Libraries.Magic2, 1540, 8, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                BlizzardStopTime = CMain.Time + 3000;
-                                break;
-
-                            #endregion
-
-                            #region MeteorStrike
-
-                            case Spell.MeteorStrike:
-                                Effects.Add(new Effect(Libraries.Magic2, 1590, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                BlizzardStopTime = CMain.Time + 3000;
-                                break;
-
-                            #endregion
-
-                            #region Reincarnation
-
-                            case Spell.Reincarnation:
-                                ReincarnationStopTime = CMain.Time + 6000;
-                                break;
-
-                            #endregion
-
-                            #region HeavenlySword
-
-                            case Spell.HeavenlySword:
-                                Effects.Add(new Effect(Libraries.Magic2, 2230 + ((int)Direction * 10), 8, 800, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-
-                            #endregion
-
-                            #region ElementalBarrier
-
-                            case Spell.ElementalBarrier:
-                                if (HasElements && !ElementalBarrier)
+                            case MirAction.Struck:
+                            case MirAction.MountStruck:
+                                if (ElementalBarrierEffect != null)
                                 {
-                                    Effects.Add(new Effect(Libraries.Magic3, 1880, 8, Frame.Count * FrameInterval, this));
-                                    SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                    ElementalBarrierEffect.Clear();
+                                    ElementalBarrierEffect.Remove();
                                 }
+
+                                Effects.Add(ElementalBarrierEffect = new Effect(Libraries.Magic3, 1910, 5, 600, this));
+                                ElementalBarrierEffect.Complete += (o, e) => Effects.Add(ElementalBarrierEffect = new Effect(Libraries.Magic3, 1890, 16, 3200, this) { Repeat = true });
                                 break;
-
-                            #endregion
-
-                            #region PoisonShot
-                            case Spell.PoisonShot:
-                                Effects.Add(new Effect(Libraries.Magic3, 2300, 8, 1000, this));
+                            default:
+                                if (ElementalBarrierEffect == null)
+                                    Effects.Add(ElementalBarrierEffect = new Effect(Libraries.Magic3, 1890, 16, 3200, this) { Repeat = true });
                                 break;
-                            #endregion
-
-                            #region OneWithNature
-                            case Spell.OneWithNature:
-                                MapControl.Effects.Add(new Effect(Libraries.Magic3, 2710, 8, 1200, CurrentLocation));
-                                SoundManager.PlaySound(20000 + 139 * 10);
-                                break;
-                            #endregion
-
-
-                            #region FireBounce
-
-                            case Spell.FireBounce:
-                                Effects.Add(new Effect(Libraries.Magic, 400, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell.GreatFireBall * 10);
-                                break;
-
-                            #endregion
-
-                            #region MeteorShower
-
-                            case Spell.MeteorShower:
-                                Effects.Add(new Effect(Libraries.Magic, 400, 10, Frame.Count * FrameInterval, this));
-                                SoundManager.PlaySound(20000 + (ushort)Spell.GreatFireBall * 10);
-                                break;
-
-                            #endregion
-
-                            #region SuperSword
-
-                            case Spell.SuperSword:
-                                MapControl.Effects.Add(new Effect(Libraries.newmagic, 0, 66, 3000, CurrentLocation));
-                                SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                break;
-                                #endregion
-
                         }
+                    }
 
-
-                        break;
-                    case MirAction.Dead:
-                        GameScene.Scene.Redraw();
-                        GameScene.Scene.MapControl.SortObject(this);
-                        if (MouseObject == this) MouseObjectID = 0;
-                        if (TargetObject == this) TargetObjectID = 0;
-                        if (MagicObject == this) MagicObjectID = 0;
-                        DeadTime = CMain.Time;
-                        break;
-
-                }
-
-            }
-
-            GameScene.Scene.MapControl.TextureValid = false;
-
-            NextMotion = CMain.Time + FrameInterval;
-            NextMotion2 = CMain.Time + EffectFrameInterval;
-
-            if (ElementalBarrier)
-            {
-                switch (CurrentAction)
-                {
-                    case MirAction.Struck:
-                    case MirAction.MountStruck:
-                        if (ElementalBarrierEffect != null)
+                    if (MagicShield)
+                    {
+                        switch (CurrentAction)
                         {
-                            ElementalBarrierEffect.Clear();
-                            ElementalBarrierEffect.Remove();
+                            case MirAction.Struck:
+                            case MirAction.MountStruck:
+                                if (ShieldEffect != null)
+                                {
+                                    ShieldEffect.Clear();
+                                    ShieldEffect.Remove();
+                                }
+
+                                Effects.Add(ShieldEffect = new Effect(Libraries.Magic, 3900, 3, 600, this));
+                                ShieldEffect.Complete += (o, e) => Effects.Add(ShieldEffect = new Effect(Libraries.Magic, 3890, 3, 600, this) { Repeat = true });
+                                break;
+                            default:
+                                if (ShieldEffect == null)
+                                    Effects.Add(ShieldEffect = new Effect(Libraries.Magic, 3890, 3, 600, this) { Repeat = true });
+                                break;
                         }
+                    }
 
-                        Effects.Add(ElementalBarrierEffect = new Effect(Libraries.Magic3, 1910, 5, 600, this));
-                        ElementalBarrierEffect.Complete += (o, e) => Effects.Add(ElementalBarrierEffect = new Effect(Libraries.Magic3, 1890, 16, 3200, this) { Repeat = true });
-                        break;
-                    default:
-                        if (ElementalBarrierEffect == null)
-                            Effects.Add(ElementalBarrierEffect = new Effect(Libraries.Magic3, 1890, 16, 3200, this) { Repeat = true });
-                        break;
                 }
-            }
-
-            if (MagicShield)
-            {
-                switch (CurrentAction)
-                {
-                    case MirAction.Struck:
-                    case MirAction.MountStruck:
-                        if (ShieldEffect != null)
-                        {
-                            ShieldEffect.Clear();
-                            ShieldEffect.Remove();
-                        }
-
-                        Effects.Add(ShieldEffect = new Effect(Libraries.Magic, 3900, 3, 600, this));
-                        ShieldEffect.Complete += (o, e) => Effects.Add(ShieldEffect = new Effect(Libraries.Magic, 3890, 3, 600, this) { Repeat = true });
-                        break;
-                    default:
-                        if (ShieldEffect == null)
-                            Effects.Add(ShieldEffect = new Effect(Libraries.Magic, 3890, 3, 600, this) { Repeat = true });
-                        break;
-                }
-            }
-
-        }
-
+            
         public virtual void ProcessFrames()
         {
             if (Frame == null) return;
@@ -5081,6 +5103,12 @@ namespace Client.MirObjects
                             break;
                         case Spell.CrossHalfMoon:
                             Libraries.Magic2.DrawBlend(40 + ((int)Direction * 10) + FrameIndex, DrawLocation, Color.White, true, 0.7F);
+                            break;
+                        case Spell.TaoHalfMoon:
+                            Libraries.Magic2.DrawBlend(40 + ((int)Direction * 10) + FrameIndex, DrawLocation, Color.White, true, 0.7F);
+                            break;
+                        case Spell.GoldenHalfMoon:
+                            Libraries.Magic2.DrawBlend(40 + ((int)Direction * 10) + FrameIndex, DrawLocation, Color.Gold, true, 0.7F);
                             break;
                         case Spell.FlamingSword:
                             Libraries.Magic.DrawBlend(3480 + ((int)Direction * 10) + FrameIndex, DrawLocation, Color.White, true, 0.7F);

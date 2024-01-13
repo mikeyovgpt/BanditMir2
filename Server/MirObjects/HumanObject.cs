@@ -2897,6 +2897,8 @@ namespace Server.MirObjects
                     break;
                 case Spell.HalfMoon:
                 case Spell.CrossHalfMoon:
+                case Spell.GoldenHalfMoon:
+                case Spell.TaoHalfMoon:
                     magic = GetMagic(spell);
                     if (magic == null || magic.Info.BaseCost + (magic.Level * magic.Info.LevelCost) > MP)
                     {
@@ -2971,6 +2973,10 @@ namespace Server.MirObjects
                         goto HalfMoon;
                     case Spell.CrossHalfMoon:
                         goto CrossHalfMoon;
+                    case Spell.TaoHalfMoon:
+                        goto TaoHalfMoon;
+                    case Spell.GoldenHalfMoon:
+                        goto GoldenHalfMoon;
                     case Spell.None:
                         Mined = true;
                         goto Mining;
@@ -2990,6 +2996,10 @@ namespace Server.MirObjects
                         goto HalfMoon;
                     case Spell.CrossHalfMoon:
                         goto CrossHalfMoon;
+                    case Spell.TaoHalfMoon:
+                        goto TaoHalfMoon;
+                    case Spell.GoldenHalfMoon:
+                        goto GoldenHalfMoon;
                 }
                 return;
             }
@@ -3141,6 +3151,14 @@ namespace Server.MirObjects
                         magic = GetMagic(Spell.CrossHalfMoon);
                         LevelMagic(magic);
                         break;
+                    case Spell.GoldenHalfMoon:
+                        magic = GetMagic(Spell.GoldenHalfMoon);
+                        LevelMagic(magic);
+                        break;
+                    case Spell.TaoHalfMoon:
+                        magic = GetMagic(Spell.TaoHalfMoon);
+                        LevelMagic(magic);
+                        break;
                     case Spell.TwinDrakeBlade:
                         magic = GetMagic(Spell.TwinDrakeBlade);
                         damageFinal = magic.GetDamage(damageBase);
@@ -3256,7 +3274,62 @@ namespace Server.MirObjects
                     }
                 }
             }
+        GoldenHalfMoon:
+            if (spell == Spell.GoldenHalfMoon)
+            {
+                magic = GetMagic(spell);
+                damageFinal = magic.GetDamage(damageBase);
+                for (int i = 0; i < 8; i++)
+                {
+                    target = Functions.PointMove(CurrentLocation, dir, 1);
+                    dir = Functions.NextDir(dir);
+                    if (target == Front) continue;
 
+                    if (!CurrentMap.ValidPoint(target)) continue;
+
+                    cell = CurrentMap.GetCell(target);
+
+                    if (cell.Objects == null) continue;
+
+                    for (int o = 0; o < cell.Objects.Count; o++)
+                    {
+                        MapObject ob = cell.Objects[o];
+                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster) continue;
+                        if (!ob.IsAttackTarget(this)) continue;
+
+                        ob.Attacked(this, damageFinal, DefenceType.Agility, false);
+                        break;
+                    }
+                }
+            }
+        TaoHalfMoon:
+            if (spell == Spell.TaoHalfMoon)
+            {
+                magic = GetMagic(spell);
+                damageFinal = magic.GetDamage(damageBase);
+                for (int i = 0; i < 8; i++)
+                {
+                    target = Functions.PointMove(CurrentLocation, dir, 1);
+                    dir = Functions.NextDir(dir);
+                    if (target == Front) continue;
+
+                    if (!CurrentMap.ValidPoint(target)) continue;
+
+                    cell = CurrentMap.GetCell(target);
+
+                    if (cell.Objects == null) continue;
+
+                    for (int o = 0; o < cell.Objects.Count; o++)
+                    {
+                        MapObject ob = cell.Objects[o];
+                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster) continue;
+                        if (!ob.IsAttackTarget(this)) continue;
+
+                        ob.Attacked(this, damageFinal, DefenceType.Agility, false);
+                        break;
+                    }
+                }
+            }
         Mining:
             if (Mined)
             {
@@ -3330,6 +3403,11 @@ namespace Server.MirObjects
                 }
             }
         }
+
+
+
+
+
         public virtual bool TryMagic()
         {
             return !Dead && Envir.Time >= ActionTime || Envir.Time >= SpellTime;
@@ -8368,6 +8446,12 @@ namespace Server.MirObjects
                     break;
                 case Spell.CrossHalfMoon:
                     Info.CrossHalfMoon = state == SpellToggleState.None ? !Info.CrossHalfMoon : use;
+                    break;
+                case Spell.TaoHalfMoon:
+                    Info.TaoHalfMoon = state == SpellToggleState.None ? !Info.TaoHalfMoon : use;
+                    break;
+                case Spell.GoldenHalfMoon:
+                    Info.GoldenHalfMoon = state == SpellToggleState.None ? !Info.GoldenHalfMoon : use;
                     break;
                 case Spell.DoubleSlash:
                     Info.DoubleSlash = state == SpellToggleState.None ? !Info.DoubleSlash : use;

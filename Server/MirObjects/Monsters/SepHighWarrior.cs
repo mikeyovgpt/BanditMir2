@@ -78,6 +78,12 @@ namespace Server.MirObjects.Monsters
                     CrossHalfMoon();
                     break;
                 case 2:
+                    TaoHalfMoon();
+                    break;
+                case 3:
+                    GoldenHalfMoon();
+                    break;
+                case 4:
                     BladeAvalanche();
                     break;
                 default:
@@ -110,6 +116,40 @@ namespace Server.MirObjects.Monsters
             if (damage == 0) return;
 
             Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Spell = Spell.CrossHalfMoon });
+
+            List<MapObject> targets = FindAllTargets(1, CurrentLocation, false);
+            if (targets.Count == 0) return;
+            Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation });
+
+            for (int i = 0; i < targets.Count; i++)
+            {
+                HalfmoonAttack(damage);
+            }
+
+        }
+        public void TaoHalfMoon()
+        {
+            int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
+            if (damage == 0) return;
+
+            Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Spell = Spell.TaoHalfMoon });
+
+            List<MapObject> targets = FindAllTargets(1, CurrentLocation, false);
+            if (targets.Count == 0) return;
+            Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation });
+
+            for (int i = 0; i < targets.Count; i++)
+            {
+                HalfmoonAttack(damage);
+            }
+
+        }
+        public void GoldenHalfMoon()
+        {
+            int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
+            if (damage == 0) return;
+
+            Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Spell = Spell.GoldenHalfMoon });
 
             List<MapObject> targets = FindAllTargets(1, CurrentLocation, false);
             if (targets.Count == 0) return;
