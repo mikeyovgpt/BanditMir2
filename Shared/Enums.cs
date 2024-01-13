@@ -1218,6 +1218,7 @@ public enum Spell : byte
     SlashingBurst = 15,
     Fury = 16,
     ImmortalSkin = 17,
+    GoldenHalfMoon = 18,
 
     //Wizard
     FireBall = 31,
@@ -1273,6 +1274,7 @@ public enum Spell : byte
     PetEnhancer = 85,
     HealingCircle = 86,
     SuperSword = 87,
+    TaoHalfMoon = 88,
 
     //Assassin
     FatalSword = 91,

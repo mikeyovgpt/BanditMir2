@@ -67,7 +67,7 @@ namespace Server.MirDatabase
 
         public bool NewDay;
 
-        public bool Thrusting, HalfMoon, CrossHalfMoon;
+        public bool Thrusting, HalfMoon, CrossHalfMoon, GoldenHalfMoon, TaoHalfMoon;
         public bool DoubleSlash;
         public byte MentalState;
         public byte MentalStateLvl;
@@ -236,6 +236,8 @@ namespace Server.MirDatabase
             Thrusting = reader.ReadBoolean();
             HalfMoon = reader.ReadBoolean();
             CrossHalfMoon = reader.ReadBoolean();
+            GoldenHalfMoon = reader.ReadBoolean();
+            TaoHalfMoon = reader.ReadBoolean();
             DoubleSlash = reader.ReadBoolean();
 
             MentalState = reader.ReadByte();
@@ -458,6 +460,8 @@ namespace Server.MirDatabase
             writer.Write(Thrusting);
             writer.Write(HalfMoon);
             writer.Write(CrossHalfMoon);
+            writer.Write(GoldenHalfMoon);
+            writer.Write(TaoHalfMoon);
             writer.Write(DoubleSlash);
             writer.Write(MentalState);
 

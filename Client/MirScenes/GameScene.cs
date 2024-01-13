@@ -935,6 +935,20 @@ namespace Client.MirScenes
                     ToggleTime = CMain.Time + 1000;
                     SendSpellToggle(actor, magic.Spell, actor.CrossHalfMoon);
                     break;
+                case Spell.GoldenHalfMoon:
+                    if (CMain.Time < ToggleTime) return;
+                    actor.GoldenHalfMoon = !actor.GoldenHalfMoon;
+                    ChatDialog.ReceiveChat(actor.GoldenHalfMoon ? "Use Golden Half Moon." : "Do not use Golden Half Moon.", ChatType.Hint);
+                    ToggleTime = CMain.Time + 1000;
+                    Network.Enqueue(new C.SpellToggle { Spell = magic.Spell, CanUse = actor.GoldenHalfMoon });
+                    break;
+                case Spell.TaoHalfMoon:
+                    if (CMain.Time < ToggleTime) return;
+                    actor.TaoHalfMoon = !actor.TaoHalfMoon;
+                    ChatDialog.ReceiveChat(actor.TaoHalfMoon ? "Use Taoist Half Moon." : "Do not use Taoist Half Moon.", ChatType.Hint);
+                    ToggleTime = CMain.Time + 1000;
+                    Network.Enqueue(new C.SpellToggle { Spell = magic.Spell, CanUse = actor.TaoHalfMoon });
+                    break;
                 case Spell.DoubleSlash:
                     if (CMain.Time < ToggleTime) return;
                     actor.DoubleSlash = !actor.DoubleSlash;
@@ -5027,6 +5041,14 @@ namespace Client.MirScenes
                 case Spell.CrossHalfMoon:
                     actor.CrossHalfMoon = p.CanUse;
                     ChatDialog.ReceiveChat(prefix + (actor.CrossHalfMoon ? "Use CrossHalfMoon." : "Do not use CrossHalfMoon."), ChatType.Hint);
+                    break;
+                case Spell.TaoHalfMoon:
+                    actor.TaoHalfMoon = p.CanUse;
+                    ChatDialog.ReceiveChat(prefix + (actor.TaoHalfMoon ? "Use TaoistHalfMoon." : "Do not use TaoistHalfMoon."), ChatType.Hint);
+                    break;
+                case Spell.GoldenHalfMoon:
+                    actor.GoldenHalfMoon = p.CanUse;
+                    ChatDialog.ReceiveChat(prefix + (actor.GoldenHalfMoon ? "Use GoldenHalfMoon." : "Do not use GoldenHalfMoon."), ChatType.Hint);
                     break;
                 case Spell.DoubleSlash:
                     actor.DoubleSlash = p.CanUse;
@@ -12220,6 +12242,26 @@ namespace Client.MirScenes
             return false;
         }
         public bool CanCrossHalfMoon(Point p)
+        {
+            MirDirection dir = MirDirection.Up;
+            for (int i = 0; i < 8; i++)
+            {
+                if (HasTarget(Functions.PointMove(p, dir, 1))) return true;
+                dir = Functions.NextDir(dir);
+            }
+            return false;
+        }
+        public bool CanGoldenHalfMoon(Point p)
+        {
+            MirDirection dir = MirDirection.Up;
+            for (int i = 0; i < 8; i++)
+            {
+                if (HasTarget(Functions.PointMove(p, dir, 1))) return true;
+                dir = Functions.NextDir(dir);
+            }
+            return false;
+        }
+        public bool CanTaoHalfMoon(Point p)
         {
             MirDirection dir = MirDirection.Up;
             for (int i = 0; i < 8; i++)
