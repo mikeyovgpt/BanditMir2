@@ -403,7 +403,7 @@ namespace Client.MirScenes
                             color = Color.DeepPink;
                             break;
                         default:
-                            color = Color.LimeGreen;
+                            color = Color.MediumOrchid;
                             break;
                     }
 

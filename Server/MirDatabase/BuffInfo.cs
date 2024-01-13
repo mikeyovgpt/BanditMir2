@@ -65,6 +65,9 @@ namespace Server.MirDatabase
                 new BuffInfo { Type = BuffType.Prison, Properties = BuffProperty.None, StackType = BuffStackType.None }, //???
                 new BuffInfo { Type = BuffType.General, Properties = BuffProperty.None, StackType = BuffStackType.None }, //???
 
+                //NewbieGuild
+                new BuffInfo { Type = BuffType.Newbie, Properties = BuffProperty.None, StackType = BuffStackType.Infinite },
+
                 //Stats
                 new BuffInfo { Type = BuffType.Exp, Properties = BuffProperty.PauseInSafeZone, StackType = BuffStackType.StackDuration },
                 new BuffInfo { Type = BuffType.Drop, Properties = BuffProperty.PauseInSafeZone, StackType = BuffStackType.StackDuration },
